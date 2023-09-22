@@ -1,1 +1,72 @@
+import tkinter as tk
+from tkinter import ttk
+
+def button_click(number):
+    current = display.get()
+    display.delete(0, tk.END)
+    display.insert(0, current + str(number))
+
+# Function to perform arithmetic operations
+def calculate():
+    try:
+        expression = display.get()
+        result = eval(expression)
+        display.delete(0, tk.END)
+        display.insert(0, str(result))
+    except:
+        display.delete(0, tk.END)
+        display.insert(0, "Error")
+
+def backspace():
+    current = display.get()
+    display.delete(0, tk.END)
+    display.insert(0, current[:-1])
+
+def clear_all():
+    display.delete(0, tk.END)
+
+root = tk.Tk()
+root.title("Calculator")
+
+style = ttk.Style()
+style.theme_use("xpnative")
+
+custom_font = ('Helvetica', 14, 'bold')
+
+style.configure('TButton', font=custom_font)
+
+display = ttk.Entry(root, width=40, font=custom_font)
+display.grid(row=0, column=0, columnspan=4)
+
+# Define button labels
+button_labels = [
+    '7', '8', '9', '/',
+    '4', '5', '6', '*',
+    '1', '2', '3', '-',
+    '0', '.', '=', '+',
+    '00', '⌫', 'C'  
+]
+
+# font
+row_val = 1
+col_val = 0
+for label in button_labels:
+    if label == '⌫':
+        ttk.Button(root, text=label, padding=(1, 10), command=backspace).grid(row=row_val, column=col_val)
+    elif label == '00':
+        ttk.Button(root, text=label, padding=(1, 10), command=lambda label=label: button_click(label)).grid(row=row_val, column=col_val)
+    elif label == 'C':
+        ttk.Button(root, text=label, padding=(40, 10), command=clear_all).grid(row=row_val, column=col_val, columnspan=2, sticky='we')
+    else:
+        ttk.Button(root, text=label, padding=(1, 10), command=lambda label=label: button_click(label) if label != '=' else calculate()).grid(row=row_val, column=col_val)
+    
+    col_val += 1
+    if col_val > 3:
+        col_val = 0
+        row_val += 1
+
+
+root.grid_columnconfigure(2, weight=1)
+
+root.mainloop()
 
